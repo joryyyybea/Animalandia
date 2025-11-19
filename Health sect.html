@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Health & Wellness | Animalandia</title>
+  <link rel="stylesheet" href="animation.css">
+  <link rel="icon" type="image/png" href="Logo.png">
+</head>
+<body>
+    <style>
+         * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; background-color: #fff; }
+
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 15px 60px; background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky; top: 0; z-index: 100;
+    }
+    header .logo { font-size: 22px; font-weight: 700; color: #6c3bb6; }
+    header .logo a { text-decoration: none; color: #6c3bb6; }
+    nav ul { list-style: none; display: flex; gap: 25px; }
+    nav ul li a { text-decoration: none; color: #333; font-weight: 500; transition: color 0.3s; }
+    nav ul li a:hover { color: #6c3bb6; }
+    nav ul li#userDisplay { cursor: pointer; }
+    nav ul li#userDisplay:hover { color: #6c3bb6; }
+
+    .hero {
+      background-color: #6c3bb6; color: white; text-align: center; padding: 80px 20px;
+    }
+    .hero h1 { font-size: 40px; margin-bottom: 15px; font-weight: 900; }
+    .hero p { font-size: 20px; margin-bottom: 30px; }
+    .search-bar { display: flex; justify-content: center; }
+    .search-bar input {
+      width: 55%; padding: 10px; border-radius: 25px 0 0 25px; border: none; outline: none;
+    }
+    .search-bar button {
+      padding: 10px 20px; background-color: #f7931e; color: white;
+      border: none; border-radius: 0 25px 25px 0; cursor: pointer; transition: 0.3s;
+    }
+    .search-bar button:hover { background-color: #ffae42; }
+
+    .section-title {
+      text-align: center; font-size: 22px; color: #6c3bb6;
+      margin-top: 40px; margin-bottom: 20px; font-weight: 700;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      padding: 0 40px 60px;
+      align-items: stretch;
+    }
+
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid #eee; border-radius: 10px; text-align: center;
+      padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      transition: 0.3s; cursor: pointer; position: relative;
+      min-height: 430px;
+    }
+    .product-card:hover {
+      transform: translateY(-5px); box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+    .product-card img { width: 100%; height: 180px; object-fit: contain; }
+    .product-card h3 { font-size: 16px; margin: 10px 0 5px; color: #333; }
+    .product-card p { color: #6c3bb6; font-weight: 600; }
+
+    .like-btn {
+      position: absolute; top: 10px; right: 10px; font-size: 22px;
+      color: #ccc; cursor: pointer; transition: transform 0.2s, color 0.3s;
+    }
+    .like-btn.liked { color: #ff4b5c; transform: scale(1.2); }
+
+    .product-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .buy-btn {
+      color: white; border: none; outline: none;
+      border-radius: 25px; padding: 8px 15px; font-weight: 600;
+      cursor: pointer; transition: all 0.3s ease;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+    .buy-btn.add { background: linear-gradient(#f08de6, #f7923e, #ffe42a); }
+    .buy-btn.buy { background: linear-gradient(#8c58de, #5b3cbc, #9505db); }
+    .buy-btn:hover {
+      background: linear-gradient(#8b05de, #e805de, #c63bbb);
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(140, 88, 222, 0.4);
+    }
+
+    @media (max-width: 480px) {
+      .product-actions { flex-direction: column; align-items: center; }
+      .buy-btn { width: 100%; max-width: 250px; }
+    }
+
+    /* Modal */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); justify-content: center; align-items: center;
+      z-index: 999; opacity: 0; transition: opacity 0.3s ease;
+    }
+    .modal.show { display: flex !important; animation: modalShow 0.35s ease-out forwards; }
+    @keyframes modalShow {
+      from { opacity: 0; transform: translateY(30px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-content {
+      background: white; border-radius: 10px; padding: 30px; max-width: 700px;
+      width: 90%; display: flex; gap: 20px; position: relative;
+    }
+    .modal-content img { width: 300px; height: 300px; object-fit: contain; }
+    .modal-content .details { flex: 1; }
+    .modal-content h2 { color: #6c3bb6; margin-bottom: 10px; }
+    .modal-content p { margin-bottom: 15px; }
+    .quantity-control { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+    .quantity-control button {
+      width: 30px; height: 30px; border: none; background: #6c3bb6;
+      color: white; border-radius: 5px; cursor: pointer;
+    }
+    .modal-buttons button {
+      margin-right: 10px; padding: 10px 15px; border: none; border-radius: 25px;
+      color: white; cursor: pointer; transition: 0.3s;
+    }
+    .add-btn { background: linear-gradient(#f08de6, #f7923e, #ffe42a); }
+    .buy-btn-modal { background: linear-gradient(#8c58de, #5b3cbc, #9505db); }
+    .cancel-btn { background: #999; }
+    .modal-buttons button:hover { opacity: 0.8; }
+    .close { position: absolute; top: 15px; right: 25px; font-size: 22px; color: #333; cursor: pointer; }
+
+    /* Cart Sidebar */
+    #cartSidebar {
+      position: fixed; right: -400px; top: 0; width: 350px; height: 100%;
+      background: #fff; box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+      transition: right 0.3s; z-index: 1000; padding: 20px;
+      display: flex; flex-direction: column;
+    }
+    #cartSidebar.active { right: 0; }
+    #cartSidebar h3 { color: #6c3bb6; margin-bottom: 15px; }
+
+    .cart-item {
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid #eee; padding: 10px 0;
+    }
+    .cart-item img { width: 60px; height: 60px; object-fit: contain; border-radius: 8px; border: 1px solid #eee; }
+    .cart-item p { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 2px; }
+    .cart-item small { font-size: 13px; color: #777; }
+    .cart-item span { font-size: 18px; color: red; cursor: pointer; }
+
+    #cartTotal {
+      font-weight: bold; color: #6c3bb6; text-align: right;
+      margin: 10px 0; font-size: 18px;
+    }
+
+    #checkoutBtn {
+      display: block; width: 100%;
+      background: linear-gradient(90deg, #f7931e, #ffae42);
+      color: #fff; font-weight: 600; font-size: 16px;
+      padding: 12px; border: none; border-radius: 10px;
+      margin-top: 15px; cursor: pointer;
+      transition: all 0.3s ease; box-shadow: 0 3px 10px rgba(247, 147, 30, 0.3);
+      text-align: center; text-decoration: none;
+    }
+    #checkoutBtn:hover {
+      background: linear-gradient(90deg, #ffae42, #f7931e);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(247, 147, 30, 0.4);
+    }
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(90deg, #8c58de, #5b3cbc, #9505db);
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  border-radius: 50px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(149, 5, 219, 0.3);
+  transition: all 0.3s ease;
+  padding: 12px 25px;
+  margin: 40px auto 60px;
+  display: block;
+  width: fit-content;
+}
+.back-btn:hover {
+  background: linear-gradient(90deg, #5b3cbc, #8c58de, #b26fff);
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(149, 5, 219, 0.4);
+}
+.back-btn::before {
+  content: "←";
+  font-size: 18px;
+}
+    </style>
+  <header>
+    <div class="logo"><a href="PET SHOP PROJECT.html">🐾Animalandia</a></div>
+    <nav>
+      <ul>
+        <li><a href="PET SHOP PROJECT.html">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+        <li id="userDisplay"><a href="Login.html">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Health & Wellness Products</h1>
+    <p>Keep your pets healthy with our range of medications and supplements.</p>
+  </section>
+
+  <h2 class="section-title">💊 Health Products 💊</h2>
+  <!-- Modal -->
+  <div id="productModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <img id="modalImg" src="" alt="">
+      <div class="details">
+        <h2 id="modalTitle"></h2>
+        <p id="modalPrice"></p>
+        <div class="quantity-control">
+          <button onclick="changeQty(-1)">-</button>
+          <span id="qty">1</span>
+          <button onclick="changeQty(1)">+</button>
+        </div>
+        <div class="modal-buttons">
+          <button class="add-btn" onclick="addToCart()">Add to Cart</button>
+          <button class="buy-btn-modal" onclick="buyNow()">Buy Now</button>
+          <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Sidebar -->
+  <div id="cartSidebar">
+    <h3>Shopping Cart</h3>
+    <div id="cartItems"></div>
+    <div id="cartTotal">Total: ₱0.00</div>
+    <a id="checkoutBtn" href="checkout.html">Checkout</a>
+    <button class="back-btn" onclick="closeCart()">Continue Shopping</button>
+  </div>
+
+  <div class="products">
+    <div class="product-card" onclick="openProduct('Papi Scour 60Ml: Co-Trimoxazole', 568, 'Health/co_ trimoxazole.png')">
+      <div class="like-btn" onclick="toggleLike(this, event)">❤</div>
+      <img src="Health/co_ trimoxazole.png" alt="Papi Scour 60Ml: Co-Trimoxazole">
+      <h3>Papi Scour 60Ml: Co-Trimoxazole</h3>
+      <p>₱568.00</p>
+      <div class="product-actions">
+        <button class="buy-btn buy">Buy Now</button>
+        <button class="buy-btn add">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card" onclick="openProduct('NUTRIVET BROMHEXINE 0.3% (100 ml) MOCULYTIC', 235, 'Health/Bromhexine.png')">
+      <div class="like-btn" onclick="toggleLike(this, event)">❤</div>
+      <img src="Health/Bromhexine.png" alt="NUTRIVET BROMHEXINE 0.3% (100 ml) MOCULYTIC">
+      <h3>NUTRIVET BROMHEXINE 0.3% (100 ml) MOCULYTIC</h3>
+      <p>₱235.00</p>
+      <div class="product-actions">
+        <button class="buy-btn buy">Buy Now</button>
+        <button class="buy-btn add">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card" onclick="openProduct('Emerflox Enrofloxacin Oral Suspension for Cats & Dogs 60ml Liquid Meds Eme', 218, 'Health/Emerfloxacin.png')">
+      <div class="like-btn" onclick="toggleLike(this, event)">❤</div>
+      <img src="Health/Emerfloxacin.png" alt="Emerflox Enrofloxacin Oral Suspension for Cats & Dogs 60ml Liquid Meds Eme">
+      <h3>Emerflox Enrofloxacin Oral Suspension for Cats & Dogs 60ml Liquid Meds Eme</h3>
+      <p>₱218.00</p>
+      <div class="product-actions">
+        <button class="buy-btn buy">Buy Now</button>
+        <button class="buy-btn add">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card" onclick="openProduct('MEOXICLAV - PAW ( CO - AMOXICLAV ) For Dogs & Cats | 60ml', 320, 'Health/Co-amoxiclav.png')">
+      <div class="like-btn" onclick="toggleLike(this, event)">❤</div>
+      <img src="Health/Co-amoxiclav.png" alt="MEOXICLAV - PAW ( CO - AMOXICLAV ) For Dogs & Cats | 60ml">
+      <h3>MEOXICLAV - PAW ( CO - AMOXICLAV ) For Dogs & Cats | 60ml</h3>
+      <p>₱320.00</p>
+      <div class="product-actions">
+        <button class="buy-btn buy">Buy Now</button>
+        <button class="buy-btn add">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card" onclick="openProduct('Mondex Dextrose Powder 100 g and 340 g', 97, 'Health/Dextrose mondex.png')">
+      <div class="like-btn" onclick="toggleLike(this, event)">❤</div>
+      <img src="Health/Dextrose mondex.png" alt="Mondex Dextrose Powder 100 g and 340 g">
+      <h3>Mondex Dextrose Powder 100 g and 340 g</h3>
+      <p>₱97.00</p>
+      <div class="product-actions">
+        <button class="buy-btn buy">Buy Now</button>
+        <button class="buy-btn add">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card" onclick="openProduct('Nematocide Dewormer for Pets', 96, 'Health/Pyrantel nematicide.png')">
+      <div class="like-btn" onclick="toggleLike(this, event)">❤</div>
+      <img src="Health/‎Pyrantel nematicide.png" alt="Nematocide Dewormer for Pets">
+      <h3>Nematocide Dewormer for Pets</h3>
+      <p>₱96.00</p>
+      <div class="product-actions">
+        <button class="buy-btn buy">Buy Now</button>
+        <button class="buy-btn add">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card" onclick="openProduct('LC-Vit Syrup 60ml Multivitamins for Dogs & Cats', 119, 'Health/Lc vit multivitamin.png')">
+      <div class="like-btn" onclick="toggleLike(this, event)">❤</div>
+      <img src="Health/Lc vit multivitamin.png" alt="LC-Vit Syrup 60ml Multivitamins for Dogs & Cats">
+      <h3>LC-Vit Syrup 60ml Multivitamins for Dogs & Cats</h3>
+      <p>₱119.00</p>
+      <div class="product-actions">
+        <button class="buy-btn buy">Buy Now</button>
+        <button class="buy-btn add">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card" onclick="openProduct('Papi MVP Multivitamins 120ml for Dog and Cats Liquid Meds', 96, 'Health/Mvp multivitamin.png')">
+      <div class="like-btn" onclick="toggleLike(this, event)">❤</div>
+      <img src="Health/Mvp multivitamin.png" alt="Papi MVP Multivitamins 120ml for Dog and Cats Liquid Meds">
+      <h3>Papi MVP Multivitamins 120ml for Dog and Cats Liquid Meds</h3>
+      <p>₱96.00</p>
+      <div class="product-actions">
+        <button class="buy-btn buy">Buy Now</button>
+        <button class="buy-btn add">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card" onclick="openProduct('Eye Care for pet Dogs Cats & Rabbits BIOLINE 50 ML Mild Eye Cleaner', 149, 'Health/‎Eye care.png')">
+      <div class="like-btn" onclick="toggleLike(this, event)">❤</div>
+      <img src="Health/‎Eye care.png" alt="Eye Care for pet Dogs Cats & Rabbits BIOLINE 50 ML Mild Eye Cleaner">
+      <h3>Eye Care for pet Dogs Cats & Rabbits BIOLINE 50 ML Mild Eye Cleaner</h3>
+      <p>₱149.00</p>
+      <div class="product-actions">
+        <button class="buy-btn buy">Buy Now</button>
+        <button class="buy-btn add">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card" onclick="openProduct('Cassiel Pet Ear Drops For Eliminate Ear Mites Treating Ear Canal Odor Pus And Itching For Dogs & Cat', 159, 'Health/‎Ear mite.png')">
+      <div class="like-btn" onclick="toggleLike(this, event)">❤</div>
+      <img src="Health/‎Ear mite.png" alt="Cassiel Pet Ear Drops For Eliminate Ear Mites Treating Ear Canal Odor Pus And Itching For Dogs & Cat">
+      <h3>Cassiel Pet Ear Drops For Eliminate Ear Mites Treating Ear Canal Odor Pus And Itching For Dogs & Cat</h3>
+      <p>₱159.00</p>
+      <div class="product-actions">
+        <button class="buy-btn buy">Buy Now</button>
+        <button class="buy-btn add">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card" onclick="openProduct('MUPIROCIN MUPIROW OINTMENT 5g 1tube', 135, 'Health/Ointment mupirocin.png')">
+      <div class="like-btn" onclick="toggleLike(this, event)">❤</div>
+      <img src="Health/Ointment mupirocin.png" alt="MUPIROCIN MUPIROW OINTMENT 5g 1tube">
+      <h3>MUPIROCIN MUPIROW OINTMENT 5g 1tube</h3>
+      <p>₱135.00</p>
+      <div class="product-actions">
+        <button class="buy-btn buy">Buy Now</button>
+        <button class="buy-btn add">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card" onclick="openProduct('NexGard Tablets for Dogs - Effective Pest Management', 545, 'Health/Nextgard.png')">
+      <div class="like-btn" onclick="toggleLike(this, event)">❤</div>
+      <img src="Health/Nextgard.png" alt="NexGard Tablets for Dogs - Effective Pest Management">
+      <h3>NexGard Tablets for Dogs - Effective Pest Management</h3>
+      <p>₱545.00</p>
+      <div class="product-actions">
+        <button class="buy-btn buy">Buy Now</button>
+        <button class="buy-btn add">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+  </div> <!-- end of .products -->
+
+<a href="PET SHOP PROJECT.html" class="back-btn">Back to Home</a>
+  <script>
+    let modal = document.getElementById('productModal');
+    let modalTitle = document.getElementById('modalTitle');
+    let modalPrice = document.getElementById('modalPrice');
+    let modalImg = document.getElementById('modalImg');
+    let qtyDisplay = document.getElementById('qty');
+    let currentProduct = {};
+    let qty = 1;
+
+    const cartSidebar = document.getElementById("cartSidebar");
+    const cartItems = document.getElementById("cartItems");
+    const cartTotal = document.getElementById("cartTotal");
+
+    function openProduct(name, price, img) {
+      currentProduct = { name, price, img };
+      modalTitle.textContent = name;
+      modalPrice.textContent = '₱' + price.toFixed(2);
+      modalImg.src = img;
+      modal.classList.add('show');
+      qty = 1;
+      qtyDisplay.textContent = qty;
+    }
+
+    function closeModal() { modal.classList.remove('show'); }
+    function changeQty(amount) {
+      qty = Math.max(1, qty + amount);
+      qtyDisplay.textContent = qty;
+    }
+
+    function addToCart() {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart.push({ ...currentProduct, qty });
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartSidebar();
+      cartSidebar.classList.add("active");
+      closeModal();
+    }
+
+    function updateCartSidebar() {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cartItems.innerHTML = '';
+      let total = 0;
+      cart.forEach(item => {
+        total += item.price * item.qty;
+        let div = document.createElement('div');
+        div.classList.add('cart-item');
+        div.innerHTML = `
+          <img src="${item.img}" alt="">
+          <div>
+            <p>${item.name}</p>
+            <small>₱${item.price} x ${item.qty}</small>
+          </div>
+          <span onclick="removeItem('${item.name}')">✖</span>
+        `;
+        cartItems.appendChild(div);
+      });
+      cartTotal.textContent = "Total: ₱" + total.toFixed(2);
+    }
+
+    function removeItem(name) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart = cart.filter(item => item.name !== name);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartSidebar();
+    }
+
+    function buyNow() {
+      if (!currentProduct || !currentProduct.name) {
+        const productCard = event.target.closest('.product-card');
+        const name = productCard.querySelector('h3').textContent;
+        const price = parseFloat(productCard.querySelector('p').textContent.replace('₱', '').replace(',', ''));
+        const img = productCard.querySelector('img').src;
+        currentProduct = { name, price, img };
+      }
+      localStorage.setItem('selectedProduct', JSON.stringify({
+        name: currentProduct.name,
+        price: currentProduct.price,
+        image: currentProduct.img,
+        qty: qty
+      }));
+      window.location.href = "checkout.html";
+    }
+
+    function closeCart() { cartSidebar.classList.remove("active"); }
+    function toggleLike(el, event) {
+      event.stopPropagation();
+      el.classList.toggle("liked");
+    }
+    updateCartSidebar();
+
+    // Para sa Login natin - Arquel
+    function checkLoginStatus() {
+      const user = JSON.parse(localStorage.getItem('loggedInUser'));
+      const userDisplay = document.getElementById('userDisplay');
+      const adminLink = document.getElementById('adminLink');
+
+      if (user) {
+        userDisplay.innerHTML = `<span>Welcome, ${user.name}</span>`;
+        if (user.email === 'admin@animalandia.com') {
+          adminLink.style.display = 'block';
+        }
+        userDisplay.addEventListener('click', function() {
+          if (confirm('Logout?')) {
+            localStorage.removeItem('loggedInUser');
+            location.reload();
+          }
+        });
+      } else {
+        userDisplay.innerHTML = '<a href="Login.html">Login</a>';
+      }
+    }
+    checkLoginStatus();
+  </script>
+</body>
+</html>

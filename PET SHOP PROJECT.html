@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>🐾 Animalandia</title>
+  <link rel="icon" type="image/png" href="Logo.png">
+  <style>
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body { font-family: 'Poppins', sans-serif; background:#fff; color:#222; min-height:100vh; }
+
+    /* Header */
+    header {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:12px 28px; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.06);
+      position:sticky; top:0; z-index:50;
+    }
+    .logo a { text-decoration:none; font-size:20px; font-weight:700; color:#6c3bb6; }
+    nav ul { display:flex; gap:18px; list-style:none; align-items:center; }
+    nav a { text-decoration:none; color:#333; font-weight:600; }
+    nav a:hover { color:#6c3bb6; }
+
+    /* Hero */
+    .hero { background:#6c3bb6; color:#fff; text-align:center; padding:48px 18px; }
+    .hero h1 { font-size:28px; font-weight:800; margin-bottom:10px; }
+    .hero p { margin-bottom:16px; }
+
+    .search-bar { display:flex; justify-content:center; gap:6px; margin-top:10px; }
+    .search-bar input { width:55%; padding:10px 14px; border-radius:25px 0 0 25px; border:none; outline:none; }
+    .search-bar button { padding:10px 16px; border-radius:0 25px 25px 0; border:none; cursor:pointer; background:#f7931e; color:#fff; font-weight:700; }
+    .search-bar button:hover { background:#ffae42; }
+
+    /* Category section */
+.Category-shop { text-align:center; font-size:20px; color:#6c3bb6; margin:28px 0 10px; font-weight:700; }
+.category-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; padding:0 28px; margin-bottom:22px; }
+.category-card { background:#fff; border-radius:10px; padding:10px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.06); text-decoration:none; color:inherit; }
+
+
+.category-card img {
+  width: 120px;   /* increase or decrease as you like */
+  height: 120px;
+  object-fit: contain;
+  margin: 0 auto 10px;
+  display: block;
+}
+
+
+    /* Products */
+    .section-title { text-align:center; font-size:22px; margin:14px 0; color:#6c3bb6; font-weight:700; }
+    .products { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; padding:0 28px 60px; }
+
+    .product-card {
+      background:#fff; border-radius:12px; padding:14px; box-shadow:0 2px 6px rgba(0,0,0,0.06);
+      position:relative; display:flex; flex-direction:column; gap:8px; cursor:pointer;
+    }
+    .product-card img { width:100%; height:160px; object-fit:contain; border-radius:8px; }
+    .product-card h3 { font-size:15px; margin-top:6px; }
+    .product-card .price { color:#6c3bb6; font-weight:800; }
+
+    .like-btn { position:absolute; top:10px; right:10px; font-size:20px; color:#ccc; cursor:pointer; user-select:none; z-index:2; }
+    .like-btn.liked { color:#ff4b5c; transform:scale(1.15); }
+
+    /* Card action area */
+    .card-actions { margin-top:auto; display:flex; gap:8px; align-items:center; justify-content:space-between; }
+    .card-buttons { display:flex; gap:8px; }
+    .btn {
+      padding:8px 12px; border-radius:20px; border:none; cursor:pointer; font-weight:700; color:#fff;
+      box-shadow:0 3px 8px rgba(0,0,0,0.08);
+    }
+    .btn.buy { background:linear-gradient(#633f9e); }
+    .btn.add { background:linear-gradient(#3948c8); }
+
+    /* Modal */
+    .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:200; }
+    .modal.show { display:flex; }
+    .modal-content { width:90%; max-width:760px; background:#fff; border-radius:10px; padding:18px; display:flex; gap:12px; align-items:flex-start; position:relative; }
+    .modal-content img { width:300px; height:300px; object-fit:contain; }
+    .modal-content h2 { color:#6c3bb6; margin-bottom:6px; }
+    .modal-content p { margin-bottom:6px; }
+    .close { position:absolute; top:12px; right:16px; cursor:pointer; font-size:20px; }
+
+    /* Cart Sidebar */
+    #cartSidebar {
+      position:fixed; top:0; right:-420px; width:360px; height:100%; background:#fff; box-shadow:-3px 0 14px rgba(0,0,0,0.12);
+      padding:18px; transition:right 0.25s ease; z-index:300; display:flex; flex-direction:column; gap:10px;
+    }
+    #cartSidebar.active { right:0; }
+    #cartSidebar h3 { color:#6c3bb6; margin-bottom:6px; }
+    .cart-list { overflow:auto; flex:1; display:flex; flex-direction:column; gap:10px; padding-right:6px; }
+    .cart-item { display:flex; gap:10px; align-items:center; border-bottom:1px dashed #eee; padding-bottom:10px; }
+    .cart-item img { width:64px; height:64px; object-fit:contain; border-radius:6px; }
+    .cart-item .meta { flex:1; }
+    .cart-item .meta p{ font-weight:700; margin-bottom:6px; font-size:14px; }
+    .cart-item small { color:#666; display:block; margin-bottom:6px; }
+    .cart-item .remove { color:#f44; cursor:pointer; font-weight:700; }
+
+    .cart-controls { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:8px; }
+    .cart-total { font-weight:900; color:#6c3bb6; }
+    #checkoutBtn { width:100%; padding:12px; border-radius:10px; border:none; cursor:pointer; background:linear-gradient(90deg,#f7931e,#ffae42); color:#fff; font-weight:800; margin-top:6px; }
+
+    /* small screens */
+    @media (max-width:560px){
+      .products { padding:0 12px 60px; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); }
+      header { padding:12px; }
+      .modal-content { flex-direction:column; align-items:center; }
+      .modal-content img { width:80%; height:220px; }
+      #cartSidebar { width:320px; }
+      .hero h1 { font-size:20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo"><a href="#">🐾 Animalandia</a></div>
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#" id="openCartBtn">Cart 🧺</a></li>
+        <li id="userDisplay"><a href="Login.html">Login</a></li>
+        
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>CREATING LIFE LONG BONDS WITH YOUR PET PALS</h1>
+    <p>Delivering top-quality pet supplies that prioritize your pet’s health and happiness.</p>
+    <div class="search-bar">
+      <input id="searchInput" type="text" placeholder="Search products..." />
+      <button id="searchBtn">Search</button>
+    </div>
+  </section>
+
+  <h2 class="Category-shop">🐾 Shop by Category 🐾</h2>
+  <div class="category-grid" aria-hidden="false">
+    <a class="category-card" href="#"><img src="Dogfood.png" alt="Dog food"><h3>Dog Food</h3></a>
+    <a class="category-card" href="#"><img src="Catfood.jpg" alt="Cat food"><h3>Cat Food</h3></a>
+    <a class="category-card" href=""><img src="Accesories.jpg" alt="Accessories"><h3>Accessories</h3></a>
+    <a class="category-card" href="Health sect.html"><img src="Health.png" alt="Health"><h3>Health Supplies</h3></a>
+  </div>
+
+  <h2 class="section-title">🐶 Royal Canin Product Sale 🐱</h2>
+
+  <div id="productList" class="products" aria-live="polite">
+    <!-- product cards will be rendered here -->
+  </div>
+
+  <!-- Modal for quick product view -->
+  <div id="productModal" class="modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true">
+      <img id="modalImg" src="" alt="">
+      <div>
+        <h2 id="modalTitle"></h2>
+        <p id="modalPrice"></p>
+        <p id="modalDesc"></p>
+
+        <div style="margin-top:12px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <button id="qtyDec" style="padding:8px;border-radius:8px;border:none;cursor:pointer;background:#6c3bb6;color:#fff;font-weight:700;">−</button>
+            <div id="modalQty" style="min-width:28px;text-align:center;font-weight:700;">1</div>
+            <button id="qtyInc" style="padding:8px;border-radius:8px;border:none;cursor:pointer;background:#6c3bb6;color:#fff;font-weight:700;">+</button>
+          </div>
+
+          <div style="display:flex;gap:8px;">
+            <button id="modalAddBtn" style="padding:8px 12px;border-radius:20px;border:none;cursor:pointer;font-weight:700;color:#fff;background:linear-gradient(#2d72cd);">Add to Cart</button>
+            <button id="modalBuyBtn" style="padding:8px 12px;border-radius:20px;border:none;cursor:pointer;font-weight:700;color:#fff;background:linear-gradient(#5a3694);">Buy Now</button>
+           
+          </div>
+        </div>
+      </div>
+      <span class="close" onclick="closeModal()">✖</span>
+    </div>
+  </div>
+
+  <!-- Cart Sidebar -->
+  <aside id="cartSidebar" aria-hidden="true">
+    <h3>Your Cart</h3>
+    <div id="cartItems" class="cart-list"></div>
+    <div class="cart-controls">
+      <div class="cart-total" id="cartTotal">Total: ₱0.00</div>
+    </div>
+    <button id="checkoutBtn">Checkout</button>
+    <button id="closeCart" style="margin-top:8px;padding:8px;border-radius:8px;border:none;background:#999;color:#fff;cursor:pointer;">Close</button>
+  </aside>
+
+<script>
+const products = [
+  { name: "Royal Canin Mini Adult 1.5kg", price: 810, image: "Products/product1.png", desc: "For small adult dogs." },
+  { name: "Royal Canin Maxi Adult 10kg", price: 2950, image: "Products/product2.png", desc: "For large adult dogs." },
+  { name: "Royal Canin Shih Tzu Adult 1.5kg", price: 855, image: "Products/product3.png", desc: "Formulated for Shih Tzu." },
+  { name: "Royal Canin Medium Adult 4kg", price: 1434, image: "Products/product4.png", desc: "Medium breed adult formula." },
+  { name: "Royal Canin Urinary 2kg", price: 1190, image: "Products/product5.png", desc: "Urinary health formula." },
+  { name: "Royal Canin Hairball Care 2kg", price: 1250, image: "Products/product6.png", desc: "For hairball control." },
+  { name: "Royal Canin Kitten 4kg", price: 2250, image: "Products/product7.png", desc: "For growing kittens." },
+  { name: "Royal Canin Indoor Adult 2kg", price: 1150, image: "Products/product8.png", desc: "For indoor cats." },
+  { name: "Royal Canin Mini Puppy 1.5kg", price: 860, image: "Products/product9.png", desc: "Mini puppy formula." },
+  { name: "Royal Canin Persian Adult 2kg", price: 1450, image: "Products/product10.png", desc: "For Persian cats." },
+  { name: "Orijen Senior Dry Dog Food 2kg", price: 1515, image: "Products/product11.png", desc: "Senior dog nutrition." },
+  { name: "Acana Grass-Fed Lamb 17kg", price: 5955, image: "Products/product12.png", desc: "Grass-fed lamb formula." },
+  { name: "Nutri Chunks Hi-Protein Puppy Lamb 1.3kg", price: 345, image: "Products/product13.png", desc: "High-protein puppy food." },
+  { name: "Nutricare Cat Dry Food (500g)", price: 60, image: "Products/product14.png", desc: "Repacked cat food 500g." }
+];
+
+function qs(sel, ctx=document) { return ctx.querySelector(sel); }
+function qsa(sel, ctx=document) { return Array.from((ctx||document).querySelectorAll(sel)); }
+function formatPeso(n){ return "₱" + Number(n).toLocaleString(); }
+
+const productListEl = qs('#productList');
+
+function renderProducts(list = products) {
+  productListEl.innerHTML = list.map((p, idx) => `
+    <div class="product-card" data-index="${idx}">
+      <div class="like-btn" data-like>❤</div>
+      <img src="${p.image}" alt="${p.name}" />
+      <h3>${p.name}</h3>
+      <div class="price">${formatPeso(p.price)}</div>
+      <div class="card-actions">
+        <div class="card-buttons">
+          <button class="btn buy" data-buy data-index="${idx}">Buy Now</button>
+          <button class="btn add" data-add data-index="${idx}">Add</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+renderProducts();
+
+/* =======================
+   MODAL
+   ======================= */
+const modal = qs('#productModal');
+const modalImg = qs('#modalImg');
+const modalTitle = qs('#modalTitle');
+const modalPrice = qs('#modalPrice');
+const modalDesc = qs('#modalDesc');
+const modalQty = qs('#modalQty');
+let modalSelected = null;
+
+function openProduct(index) {
+  const p = products[index];
+  modalSelected = p;
+  modalImg.src = p.image;
+  modalTitle.innerText = p.name;
+  modalPrice.innerText = formatPeso(p.price);
+  modalDesc.innerText = p.desc;
+  modalQty.innerText = "1";
+
+  modal.classList.add("show");
+}
+function closeModal(){ modal.classList.remove("show"); }
+
+qs('#qtyDec').addEventListener('click', ()=> modalQty.innerText = Math.max(1, Number(modalQty.innerText)-1));
+qs('#qtyInc').addEventListener('click', ()=> modalQty.innerText = Number(modalQty.innerText)+1);
+
+/* =======================
+   CART SYSTEM
+   ======================= */
+function readCart(){ return JSON.parse(localStorage.getItem('cart')) || []; }
+function saveCart(c){ localStorage.setItem('cart', JSON.stringify(c)); renderCart(); }
+
+function addToCart(name, price, image, qty=1){
+  const cart = readCart();
+  const found = cart.find(i=>i.name===name);
+
+  if (found) found.quantity += qty;
+  else cart.push({ name, price, image, quantity: qty });
+
+  saveCart(cart);
+}
+
+function addToCartFromCard(i){
+  const p = products[i];
+  addToCart(p.name,p.price,p.image,1);
+  openCart();
+}
+function addToCartFromModal(){
+  const p = modalSelected;
+  addToCart(p.name,p.price,p.image, Number(modalQty.innerText));
+  closeModal();
+  openCart();
+}
+
+/* =======================
+   BUY NOW
+   ======================= */
+function buyNowFromCard(i){
+  const p = products[i];
+  addToCart(p.name,p.price,p.image,1);
+  openCart();
+}
+function buyNowFromModal(){
+  const p = modalSelected;
+  addToCart(p.name,p.price,p.image, Number(modalQty.innerText));
+  closeModal();
+  openCart();
+}
+
+/* =======================
+   RENDER CART
+   ======================= */
+const cartItemsEl = qs('#cartItems');
+const cartTotalEl = qs('#cartTotal');
+
+function renderCart(){
+  const cart = readCart();
+  if (!cart.length){
+    cartItemsEl.innerHTML = `<div style="color:#666;padding:10px;">Your cart is empty.</div>`;
+    cartTotalEl.innerText = "Total: ₱0.00";
+    return;
+  }
+
+  let total = 0;
+  cartItemsEl.innerHTML = cart.map((i,idx)=>{
+    total += i.price * i.quantity;
+    return `
+      <div class="cart-item">
+        <img src="${i.image}">
+        <div class="meta">
+          <p>${i.name}</p>
+          <small>${formatPeso(i.price)} × ${i.quantity}</small>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  cartTotalEl.innerText = "Total: " + formatPeso(total);
+}
+
+/* =======================
+   CART OPEN/CLOSE
+   ======================= */
+const cartSidebar = qs('#cartSidebar');
+qs("#openCartBtn").addEventListener("click", ()=> openCart());
+qs("#closeCart").addEventListener("click", ()=> closeCart());
+
+function openCart(){ renderCart(); cartSidebar.classList.add("active"); }
+function closeCart(){ cartSidebar.classList.remove("active"); }
+
+/* =======================
+   LOGIN STATUS
+   ======================= */
+function checkLoginStatus() {
+  const user = JSON.parse(localStorage.getItem("loggedInUser"));
+  const el = document.getElementById("userDisplay");
+
+  if (user) {
+    el.innerHTML = `<span>Welcome, ${user.name}</span>`;
+    el.onclick = ()=>{ if(confirm("Logout?")){ localStorage.removeItem("loggedInUser"); location.reload(); }};
+  }
+}
+checkLoginStatus();
+
+/* =======================
+   >>> LOGIN CHECK ADDED HERE <<<
+   ======================= */
+function requireLogin(action, data = null) {
+  const user = JSON.parse(localStorage.getItem("loggedInUser"));
+  if (!user) {
+    localStorage.setItem("pendingAction", JSON.stringify({ action, data }));
+    window.location.href = "Login.html";
+    return false;
+  }
+  return true;
+}
+
+function runPendingAction() {
+  const pending = JSON.parse(localStorage.getItem("pendingAction"));
+  if (!pending) return;
+
+  const { action, data } = pending;
+
+  if (action === "addFromCard") addToCartFromCard(data.index);
+  if (action === "buyFromCard") buyNowFromCard(data.index);
+  if (action === "addFromModal") addToCartFromModal();
+  if (action === "buyFromModal") buyNowFromModal();
+  if (action === "openCart") openCart();
+  if (action === "checkout") document.getElementById("checkoutBtn").click();
+
+  localStorage.removeItem("pendingAction");
+}
+window.addEventListener("load", runPendingAction);
+/* =======================
+   EVENT HANDLERS (with login protection)
+   ======================= */
+document.addEventListener("click", (e) => {
+  // product card click → open modal
+  if (e.target.closest(".product-card") && !e.target.dataset.add && !e.target.dataset.buy) {
+    const index = e.target.closest(".product-card").dataset.index;
+    openProduct(index);
+  }
+
+  // Add from product card
+  if (e.target.matches("[data-add]")) {
+    const index = Number(e.target.dataset.index);
+
+    if (!requireLogin("addFromCard", { index })) return;
+    addToCartFromCard(index);
+  }
+
+  // Buy Now from product card
+  if (e.target.matches("[data-buy]")) {
+    const index = Number(e.target.dataset.index);
+
+    if (!requireLogin("buyFromCard", { index })) return;
+    buyNowFromCard(index);
+  }
+});
+
+/* =======================
+   ADD / BUY FROM MODAL with login check
+   ======================= */
+document.getElementById("modalAdd").addEventListener("click", () => {
+  if (!requireLogin("addFromModal")) return;
+  addToCartFromModal();
+});
+
+document.getElementById("modalBuy").addEventListener("click", () => {
+  if (!requireLogin("buyFromModal")) return;
+  buyNowFromModal();
+});
+
+/* =======================
+   CART BUTTONS (require login)
+   ======================= */
+document.getElementById("openCartBtn").addEventListener("click", () => {
+  if (!requireLogin("openCart")) return;
+  openCart();
+});
+
+/* =======================
+   CHECKOUT (require login)
+   ======================= */
+document.getElementById("checkoutBtn").addEventListener("click", () => {
+  if (!requireLogin("checkout")) return;
+
+  alert("Proceeding to checkout... (You are logged in)");
+});
+
+/* =======================
+   LIKE BUTTON
+   ======================= */
+document.addEventListener("click", (e) => {
+  if (e.target.matches("[data-like]")) {
+    e.target.classList.toggle("liked");
+  }
+});
+</script>
+
+</body>
+</html>

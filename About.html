@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Animalandia</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      color: #333;
+    }
+
+    header {
+      display: flex; justify-content: space-between;
+      padding: 15px 0px; background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: relative; top: 0; z-index: 80; width: 100%;
+    }
+    header .logo { font-size: 22px; font-weight: 700; color: #6c3bb6; }
+    header .logo a { text-decoration: none; color: #6c3bb6; }
+    nav ul { list-style: none; display: flex; gap: 15px; }
+    nav ul li a { text-decoration: none; color: #333; font-weight: 500; transition: color 0.3s; }
+    nav ul li a:hover { color: #6c3bb6; }
+    nav ul li#userDisplay { cursor: pointer; }
+    nav ul li#userDisplay:hover { color: #6c3bb6; }
+    nav ul li#adminLink { display: none; }
+
+    /* Header Style */
+  .header {
+  background: #6A0DAD;
+  padding: 60px 10px;
+  text-align: center;
+  color: white;
+  margin-bottom: 50px; /* ← ADD THIS */
+}
+
+    .header h1 {
+      margin: 0;
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .header p {
+      margin-top: 10px;
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    /* Main Content */
+   .content-box {
+     max-width: 1000px;
+    background: white;
+    margin: 60px auto 40px auto; 
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+    h2 {
+      color: #5A2FBE;
+      margin-top: 30px;
+      font-size: 24px;
+    }
+
+    p {
+      line-height: 1.7;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    ul {
+      margin-top: 10px;
+      line-height: 1.8;
+    }
+
+    .highlight-box {
+      background: #f2e8ff;
+      padding: 16px;
+      border-left: 5px solid #6A0DAD;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo"><a href="PET SHOP PROJECT.html">🐾Animalandia</a></div>
+    <nav>
+      <ul>
+        <li><a href="PET SHOP PROJECT.html">Home</a></li>
+        <li><a href="About.html">About</a></li>
+        <li><a href="Contact.html">Contact</a></li>
+        <li id="userDisplay"><a href="Login.html">Login</a></li>
+        <li id="adminLink" style="display:none;"><a href="admin.html">Admin Panel</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Purple Header -->
+  <div class="header">
+    <h1>About Animalandia</h1>
+    <p>Your trusted partner in caring for your beloved pets.</p>
+  </div>
+
+  <!-- Main Description Box -->
+  <div class="content-box">
+    
+    <h2>What is Animalandia?</h2>
+    <p>
+      <b>Animalandia</b> is an online pet shop designed to help pet owners easily find 
+      high-quality pet supplies, food, and accessories.  
+      Our goal is to create a simple, organized, and enjoyable shopping experience for every customer.
+    </p>
+
+    <div class="highlight-box">
+      We focus on delivering products that keep your pets <b>healthy, happy, and well-cared for</b>.
+    </div>
+
+    <h2>What You Can Do on This Website</h2>
+    <ul>
+      <li>Browse a wide our selection of pet products</li>
+      <li>View detailed product information, images, and prices</li>
+      <li>Add items to your cart for easy checkout</li>
+      <li>Search for specific products using the search bar</li>
+      <li>Contact the developer for help or suggestions</li>
+    </ul>
+
+    <h2>Admin Features</h2>
+    <p>This website includes an admin dashboard with tools to keep everything updated:</p>
+    <ul>
+      <li>Add new products anytime</li>
+      <li>Edit or update existing items</li>
+      <li>Delete products instantly</li>
+      <li>Automatically display all changes on the main shop page</li>
+    </ul>
+
+    <h2>Why Animalandia Was Created</h2>
+    <p>
+      Animalandia was built to make pet shopping more convenient for owners.  
+      Instead of going to physical stores, users can easily browse products 
+      online and get the items they need in just a few clicks.
+    </p>
+
+    <p>
+      Whether you're caring for dogs, cats, or other furry pals, Animalandia is here to help you give them the best.
+    </p>
+
+  </div>
+
+  <script>
+    // Para sa Login natin - Arquel
+    function checkLoginStatus() {
+      const user = JSON.parse(localStorage.getItem('loggedInUser'));
+      const userDisplay = document.getElementById('userDisplay');
+      const adminLink = document.getElementById('adminLink');
+
+      if (user) {
+        userDisplay.innerHTML = `<span>Welcome, ${user.name}</span>`;
+        if (user.email === 'admin@animalandia.com') {
+          adminLink.style.display = 'block';
+        }
+        userDisplay.addEventListener('click', function() {
+          if (confirm('Logout?')) {
+            localStorage.removeItem('loggedInUser');
+            location.reload();
+          }
+        });
+      } else {
+        userDisplay.innerHTML = '<a href="Login.html">Login</a>';
+      }
+    }
+    checkLoginStatus();
+  </script>
+
+</body>
+</html>
