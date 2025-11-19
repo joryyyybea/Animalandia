@@ -332,7 +332,6 @@ function renderCart(){
    CART OPEN/CLOSE
    ======================= */
 const cartSidebar = qs('#cartSidebar');
-qs("#openCartBtn").addEventListener("click", ()=> openCart());
 qs("#closeCart").addEventListener("click", ()=> closeCart());
 
 function openCart(){ renderCart(); cartSidebar.classList.add("active"); }
@@ -411,12 +410,12 @@ document.addEventListener("click", (e) => {
 /* =======================
    ADD / BUY FROM MODAL with login check
    ======================= */
-document.getElementById("modalAdd").addEventListener("click", () => {
+document.getElementById("modalAddBtn").addEventListener("click", () => {
   if (!requireLogin("addFromModal")) return;
   addToCartFromModal();
 });
 
-document.getElementById("modalBuy").addEventListener("click", () => {
+document.getElementById("modalBuyBtn").addEventListener("click", () => {
   if (!requireLogin("buyFromModal")) return;
   buyNowFromModal();
 });
